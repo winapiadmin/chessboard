@@ -1,4 +1,5 @@
-var sourceSquare;
+var sourceSquare = "";
+var chess;
 function WhichButton(event) {
     var cell = undefined;
     if (event.target.localName == "img"){
@@ -17,7 +18,7 @@ function WhichButton(event) {
         }
     }
     else if (event.button == 0) {
-        const chess = new Chess();
+        if (sourceSquare=="") {
             for (square in SQUARES) {
                 document.getElementById(SQUARES[square]).classList.remove("pointed");
             }
@@ -29,24 +30,61 @@ function WhichButton(event) {
                 chess.undo();
                 if (coordmove.includes(activeCell.id)){
                    document.getElementById(coordmove.replace(activeCell.id, "")).classList.add("pointed");
-                   sourceSquare = move.from;
+                   sourceSquare = activeCell.id;
 		}
             }
-        console.log(activeCell.id);
-        console.log(sourceSquare);
-        if (activeCell.classList.contains("pointed")) {
-            chess.move(sourceSquare + activeCell.id);
-            console.log(chess.board());
-            try {
-                document.getElementById(activeCell.id).childNodes[0].src = document.getElementById(sourceSquare).childNodes[0].src;
-                activeCell.childNodes[0].src = "";
-                for (square in SQUARES) {
-                    document.getElementById(SQUARES[square]).classList.remove("pointed");
-                }
-            }
-            catch(error){
-                console.log(error);
-            }
-        }
-    }
-}
+	    return;
+	}
+    if (activeCell.classList.contains("pointed")) {
+		try {
+			try{
+				if (chess.is_castle_kingside({from: sourceSquare, 
+									  to: activeCell.id.toString(), 
+										  promotion: 'q'})){
+					document.getElementById("f1").childNodes[0].src = document.getElementById("h1").childNodes[0].src;
+							document.getElementById("h1").childNodes[0].src = "./EmptySquare.gif";
+				}
+				if (chess.is_castle_kingside({from: sourceSquare, 
+									  to: activeCell.id.toString(), 
+										  promotion: 'q'})){
+					document.getElementById("d1").childNodes[0].src = document.getElementById("a1").childNodes[0].src;
+							document.getElementById("h1").childNodes[0].src = "./EmptySquare.gif";
+				}
+			}
+			catch(err){}
+			activeCell.childNodes[0].src = document.getElementById(sourceSquare).childNodes[0].src;
+			document.getElementById(sourceSquare).childNodes[0].src = "./EmptySquare.gif";
+			for (square in SQUARES) {
+				document.getElementById(SQUARES[square]).classList.remove("pointed");
+			}
+			chess.move({from: sourceSquare, 
+			to: activeCell.id.toString(), 
+			promotion: 'q'});
+		}
+		catch(error){
+			console.log(error);
+		}
+		console.log(chess.ascii());
+		sourceSquare="";
+	}
+	else {
+		for (square in SQUARES) {
+			document.getElementById(SQUARES[square]).classList.remove("pointed");
+		}
+		sourceSquare = "";
+		for (square in SQUARES) {
+			document.getElementById(SQUARES[square]).classList.remove("pointed");
+		}
+		const moves = chess.moves();
+		for (algmove in moves) {
+			let move = chess.move(moves[algmove]);
+			// Parse the algebraic move to get the coordinate notation
+			let coordmove = move.from + move.to;
+			chess.undo();
+			if (coordmove.includes(activeCell.id)){
+			   document.getElementById(coordmove.replace(activeCell.id, "")).classList.add("pointed");
+			   sourceSquare = activeCell.id;
+			}
+		}
+	}
+}}

@@ -1292,7 +1292,75 @@ class Chess {
       moveNumber: this._moveNumber
     })
   }
+  is_castle_kingside(move) {
+	let moveObj = null
+      const moves = this._moves()
 
+      // convert the pretty move object to an ugly move object
+      for (let i = 0, len = moves.length; i < len; i++) {
+        if (
+          move.from === algebraic(moves[i].from) &&
+          move.to === algebraic(moves[i].to) &&
+          (!("promotion" in moves[i]) || move.promotion === moves[i].promotion)
+        ) {
+          moveObj = moves[i]
+          break
+        }
+      }
+        // if we moved the king
+    if (this._board[moveObj.to].type === KING) {
+      // if we castled, move the rook next to the king
+      if (moveObj.flags & BITS.KSIDE_CASTLE) {
+        return true;
+      }
+    }
+    return false;
+  }
+  is_castle_queenside(move) {
+	let moveObj = null
+      const moves = this._moves()
+
+      // convert the pretty move object to an ugly move object
+      for (let i = 0, len = moves.length; i < len; i++) {
+        if (
+          move.from === algebraic(moves[i].from) &&
+          move.to === algebraic(moves[i].to) &&
+          (!("promotion" in moves[i]) || move.promotion === moves[i].promotion)
+        ) {
+          moveObj = moves[i]
+          break
+        }
+      }
+    // if we moved the king
+    if (this._board[moveObj.to].type === KING) {
+      // if we castled, move the rook next to the king
+      if (moveObj.flags & BITS.QSIDE_CASTLE) {
+        return true;
+      }
+    }
+    return false;
+  }
+  is_promotion(move){
+       let moveObj = null
+	  const moves = this._moves()
+
+	  // convert the pretty move object to an ugly move object
+	  for (let i = 0, len = moves.length; i < len; i++) {
+		if (
+		  move.from === algebraic(moves[i].from) &&
+		  move.to === algebraic(moves[i].to) &&
+		  (!("promotion" in moves[i]) || move.promotion === moves[i].promotion)
+		) {
+		  moveObj = moves[i]
+		  break
+		}
+	  }
+	// if pawn promotion, replace with new piece
+	if (moveObj.promotion) {
+	  return true;
+	}
+	return false;
+  }
   _makeMove(move) {
     const us = this._turn
     const them = swapColor(us)
