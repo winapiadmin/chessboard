@@ -16,6 +16,7 @@ function WhichButton(event) {
         else if (activeCell.classList.contains("pointed")) {
             activeCell.classList.remove("pointed");
         }
+		return;
     }
     else if (event.button == 0) {
         if (sourceSquare == "") {
@@ -103,7 +104,6 @@ function WhichButton(event) {
             }
             console.log(chess.ascii());
             sourceSquare = "";
-			AIMove();
         }
         else {
             for (square in SQUARES) {
@@ -202,13 +202,6 @@ function moveSquare(activeCell, sourceSquare, promotion){
 	if (chess.isCheckmate()) alert("Checkmate");
 	if (chess.isDraw()) alert("Draw: 3-fold, 5-fold, 50 move rule, stalemate");
 	Reconfig();
-}
-function AIMove(){
-	if (chess.isCheckmate()) alert("Checkmate");
-	if (chess.isDraw()) alert("Draw: 3-fold, 5-fold, 50 move rule, stalemate");
-	const moves = chess.moves();
-	let move = chess.move(moves[Math.floor(moves.length * Math.random()-1)]);
-	moveSquare(document.getElementById(move.to), move.from, move.promotion);
 }
 function name(type, color) {
   var name1 = "./";

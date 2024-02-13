@@ -1,0 +1,14 @@
+$re = '/.+(.+,.+,.+);/m';
+/*'/#include <.+/.+>/m';
+'/#include \".+|/.+\"/mi';
+'/#include <.+|/.+>/m';
+'/#define .+ .+/mi';*/
+'/#.+ .+|#.+/mi';
+'/\/\/.+/i';
+'/.+\/*.+/i';
+$str = ;
+
+preg_match_all($re, $str, $matches, PREG_SET_ORDER, 0);
+
+// Print the entire match result
+var_dump($matches);
