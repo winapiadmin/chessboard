@@ -3,7 +3,7 @@ var chess;
 function WhichButton(event) {
     var cell = undefined;
     if (event.target.localName == "img") {
-        cell = event.target.parentNode;
+        cell = event.target.parentElement;
     }
     if (event.target.localName == "td") {
         cell = event.target;
@@ -29,67 +29,15 @@ function WhichButton(event) {
                 // Parse the algebraic move to get the coordinate notation
                 let coordmove = move.from + move.to;
                 chess.undo();
-                if (coordmove.includes(activeCell.id)) {
-                    document.getElementById(coordmove.replace(activeCell.id, "")).classList.add("pointed");
+                if (move.from == activeCell.id) {
+                    document.getElementById(move.to).classList.add("pointed");
                     sourceSquare = activeCell.id;
                 }
             }
             return;
         }
-        if (activeCell.classList.contains("pointed")) {
+        if (sourceSquare != "") {
             try {
-                try {
-                    if (chess.is_castle_kingside({
-                        from: sourceSquare,
-                        to: activeCell.id.toString()
-                    })) {
-						if (chess._turn == WHITE){
-							document.getElementById("f1").childNodes[0].src = document.getElementById("h1").childNodes[0].src;
-							document.getElementById("h1").childNodes[0].src = "./EmptySquare.gif";
-						}
-						else{
-							document.getElementById("f8").childNodes[0].src = document.getElementById("h8").childNodes[0].src;
-							document.getElementById("h8").childNodes[0].src = "./EmptySquare.gif";
-						}
-                    }
-                    if (chess.is_castle_queenside({
-                        from: sourceSquare,
-                        to: activeCell.id.toString()
-                    })) {
-						if (chess._turn == WHITE){
-							document.getElementById("d1").childNodes[0].src = document.getElementById("a1").childNodes[0].src;
-							document.getElementById("h1").childNodes[0].src = "./EmptySquare.gif";
-						}
-						else{
-							document.getElementById("d8").childNodes[0].src = document.getElementById("a8").childNodes[0].src;
-							document.getElementById("h8").childNodes[0].src = "./EmptySquare.gif";
-						}
-                    }
-					if(chess.is_promotion({
-											from: sourceSquare,
-											to: activeCell.id.toString(),
-											promotion: 'q'}
-					)) {
-						activeCell.childNodes[0].src = (promotion == 'q')?"./WhitexQueen.gif":((promotion == 'n')?"./WhitexKnight.gif":((promotion == 'r')?"./WhitexRook.gif":"./WhitexBishop.gif"));
-						document.getElementById(sourceSquare).childNodes[0].src = "./EmptySquare.gif";
-						for (square in SQUARES) {
-							document.getElementById(SQUARES[square]).classList.remove("pointed");
-						}
-						chess.move({
-							from: sourceSquare,
-							to: activeCell.id.toString(),
-							promotion: 'q'
-						});
-						console.log(chess.ascii());
-						if (chess.isCheckmate()) alert("Checkmate");
-						if (chess.isDraw()) alert("Draw: 3-fold, 5-fold, 50 move rule, stalemate");
-						Reconfig();
-						return;
-					}
-                }
-                catch (err) { console.log(err)}
-                activeCell.childNodes[0].src = document.getElementById(sourceSquare).childNodes[0].src;
-                document.getElementById(sourceSquare).childNodes[0].src = "./EmptySquare.gif";
                 for (square in SQUARES) {
                     document.getElementById(SQUARES[square]).classList.remove("pointed");
                 }
@@ -105,32 +53,12 @@ function WhichButton(event) {
             console.log(chess.ascii());
             sourceSquare = "";
         }
-        else {
-            for (square in SQUARES) {
-                document.getElementById(SQUARES[square]).classList.remove("pointed");
-            }
-            sourceSquare = "";
-            for (square in SQUARES) {
-                document.getElementById(SQUARES[square]).classList.remove("pointed");
-            }
-            const moves = chess.moves();
-            for (algmove in moves) {
-                let move = chess.move(moves[algmove]);
-                // Parse the algebraic move to get the coordinate notation
-                let coordmove = move.from + move.to;
-                chess.undo();
-                if (coordmove.includes(activeCell.id)) {
-                    document.getElementById(coordmove.replace(activeCell.id, "")).classList.add("pointed");
-                    sourceSquare = activeCell.id;
-                }
-            }
-        }
         console.log(chess.fen().split(" ")[0]);
     }
 	Reconfig();
 	if (chess.isCheckmate()) alert("Checkmate");
 	if (chess.isDraw()) alert("Draw: 3-fold, 5-fold, 50 move rule, stalemate");
-}
+}/*
 // pass activeCell as the destination cell
 function moveSquare(activeCell, sourceSquare, promotion){
 	try {
@@ -202,7 +130,7 @@ function moveSquare(activeCell, sourceSquare, promotion){
 	if (chess.isCheckmate()) alert("Checkmate");
 	if (chess.isDraw()) alert("Draw: 3-fold, 5-fold, 50 move rule, stalemate");
 	Reconfig();
-}
+}*/
 function name(type, color) {
   var name1 = "./";
   name1 += (color != "b") ? "White" : "Black";
@@ -237,7 +165,15 @@ function Reconfig() {
 				document.getElementById(chess.board()[x][y].square).childNodes[0].src = name(chess.board()[x][y].type, chess.board()[x][y].color);
 			}
 			else{
-				document.getElementById(algebraic(8*x+y)).childNodes[0].src = "./EmptySquare.gif";
+				if (document.getElementById(algebraic(8 * x + y)).classList.contains("light")) {
+					document.getElementById(algebraic(8 * x + y)).childNodes[0].src = "./EmptySquarelight.jpeg";
+				}
+				else if (document.getElementById(algebraic(8 * x + y)).classList.contains("dark")) {
+					document.getElementById(algebraic(8 * x + y)).childNodes[0].src = "./EmptySquaredark.jpeg";
+				}
+				else if (document.getElementById(algebraic(8 * x + y)).classList.contains("pointed")){
+					document.getElementById(algebraic(8 * x + y)).childNodes[0].src = "./EmptySquarepointed.jpeg";
+				}
 			}
 		}
     }
