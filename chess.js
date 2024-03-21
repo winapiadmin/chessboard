@@ -87,7 +87,7 @@ function WhichButton(event) {
 						return;
 					}
                 }
-                catch (err) { console.log(err)}
+                catch (err) { console.log(err);Reconfig();sourceSquare = '';}
                 activeCell.childNodes[0].src = document.getElementById(sourceSquare).childNodes[0].src;
                 document.getElementById(sourceSquare).childNodes[0].src = "./EmptySquare.gif";
                 for (square in SQUARES) {
@@ -101,7 +101,8 @@ function WhichButton(event) {
             }
             catch (error) {
                 console.log(error);
-            }
+				sourceSquare = '';
+            }Reconfig();
             console.log(chess.ascii());
             sourceSquare = "";
         }
@@ -130,78 +131,6 @@ function WhichButton(event) {
 	Reconfig();
 	if (chess.isCheckmate()) alert("Checkmate");
 	if (chess.isDraw()) alert("Draw: 3-fold, 5-fold, 50 move rule, stalemate");
-}
-// pass activeCell as the destination cell
-function moveSquare(activeCell, sourceSquare, promotion){
-	try {
-		try {
-			if (chess.is_castle_kingside({
-				from: sourceSquare,
-				to: activeCell.id.toString()
-			})) {
-				if (chess._turn == WHITE){
-					document.getElementById("f1").childNodes[0].src = document.getElementById("h1").childNodes[0].src;
-					document.getElementById("h1").childNodes[0].src = "./EmptySquare.gif";
-				}
-				else{
-					document.getElementById("f8").childNodes[0].src = document.getElementById("h8").childNodes[0].src;
-					document.getElementById("h8").childNodes[0].src = "./EmptySquare.gif";
-				}
-			}
-			if (chess.is_castle_queenside({
-				from: sourceSquare,
-				to: activeCell.id.toString()
-			})) {
-				if (chess._turn == WHITE){
-					document.getElementById("d1").childNodes[0].src = document.getElementById("a1").childNodes[0].src;
-					document.getElementById("h1").childNodes[0].src = "./EmptySquare.gif";
-				}
-				else{
-					document.getElementById("d8").childNodes[0].src = document.getElementById("a8").childNodes[0].src;
-					document.getElementById("h8").childNodes[0].src = "./EmptySquare.gif";
-				}
-			}
-			if(chess.is_promotion({
-				from: sourceSquare,
-				to: activeCell.id.toString(),
-				promotion: promotion
-			})) {
-				activeCell.childNodes[0].src = (promotion == 'q')?"./WhitexQueen.gif":((promotion == 'n')?"./WhitexKnight.gif":((promotion == 'r')?"./WhitexRook.gif":"./WhitexBishop.gif"));
-				document.getElementById(sourceSquare).childNodes[0].src = "./EmptySquare.gif";
-				for (square in SQUARES) {
-					document.getElementById(SQUARES[square]).classList.remove("pointed");
-				}
-				chess.move({
-					from: sourceSquare,
-					to: activeCell.id.toString(),
-					promotion: promotion
-				});
-				console.log(chess.ascii());
-				if (chess.isCheckmate()) alert("Checkmate");
-				if (chess.isDraw()) alert("Draw: 3-fold, 5-fold, 50 move rule, stalemate");
-				Reconfig();
-				return;
-			}
-		}
-		catch (err) { console.log(err)}
-		activeCell.childNodes[0].src = document.getElementById(sourceSquare).childNodes[0].src;
-		document.getElementById(sourceSquare).childNodes[0].src = "./EmptySquare.gif";
-		for (square in SQUARES) {
-			document.getElementById(SQUARES[square]).classList.remove("pointed");
-		}
-		chess.move({
-			from: sourceSquare,
-			to: activeCell.id.toString(),
-			promotion: 'q'
-		});
-	}
-	catch (error) {
-		console.log(error);
-	}
-	console.log(chess.ascii());
-	if (chess.isCheckmate()) alert("Checkmate");
-	if (chess.isDraw()) alert("Draw: 3-fold, 5-fold, 50 move rule, stalemate");
-	Reconfig();
 }
 function name(type, color) {
   var name1 = "./";
